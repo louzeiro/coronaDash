@@ -66,35 +66,29 @@
     <div class="mycontainer">
 
         <div>
+
             <h1>Pró-Reitoria de Inclusão e Pertencimento</h1>
             <nav>
                 <ul>
-                    <p>
-                        <button onclick="showChart('chart1')">Campus</button>
-                        <button onclick="showChart('chart2')">Unidade</button>
-                        <button onclick="showChart('chart3')">Contemplado</button>
-                    </p>
-                    <p>
-                        <button onclick="showChart('chart4')">Gênero</button>
-                        <button onclick="showChart('chart5')">Etnia</button>
-                        <button onclick="showChart('chart6')">Renda per Capita</button>
-                        <button onclick="showChart('chart7')">Idade</button>
-                    </p>
-
-
+                    <li><a href="#">Campus</a></li>
+                    <li><a href="#">Unidade</a></li>
+                    <li><a href="#">Contemplado</a></li>
+                    <li><a href="#">Gênero</a></li>
+                    <li><a href="#">Etnia</a></li>
+                    <li><a href="#">Renda per Capita</a></li>
+                    <li><a href="#">Idade</a></li>
                 </ul>
             </nav>
         </div>
+
         <div class="half-chart"><canvas id="myChart4"></canvas></div>
+
+
     </div>
-    <div class="mycontainer">
-        <div class="chart"><canvas id="myChart"></canvas></div>
-        <div class="chart"><canvas id="myChart2"></canvas></div>
-    </div>
+    <div class="chart"><canvas id="myChart"></canvas></div>
+
+    <div class="chart"><canvas id="myChart2"></canvas></div>
     <div class="chart"><canvas id="myChart3"></canvas></div>
-    <div class="chart"><canvas id="myChart5"></canvas></div>
-
-
 
 
 
@@ -106,16 +100,10 @@
         }
 
         // Generate a unique color palette
-        const colorPalette2 = [];
+        const colorPalette = [];
         for (let i = 0; i < 6; i++) {
-            colorPalette2.push(generateRandomColor());
+            colorPalette.push(generateRandomColor());
         }
-
-        const colorPalette = ["#e8d174", "#e39e54", "#d64d4d", "#4d7358", "#9ed670", "#fdcade"]
-        //const colorPalette = ['#ff7f0e', '#2ca02c', '#d62728', '#4d7358', '#d64d4d', '#1f77b4']
-        //const colorPalette = ['#F0F8FF', '#FAEBD7', '#00FFFF', '#7FFFD4', '#F0FFFF', '#F5F5DC', '#FFE4C4']
-
-        console.log(colorPalette);
 
         // Chart 1
         const ctx = document.getElementById('myChart').getContext('2d');
@@ -126,7 +114,7 @@
                 datasets: [{
                     label: 'Total de inscritos',
                     data: [1071, 295, 196, 168, 92, 83, 33, 21],
-                    // backgroundColor: colorPalette,
+                    backgroundColor: colorPalette,
                     borderWidth: 1
                 }]
             },
@@ -147,12 +135,12 @@
                 {
                     label: 'Não',
                     data: [487, 152, 85, 71, 38, 40, 13, 15],
-                    // backgroundColor: colorPalette[0],
+                    backgroundColor: colorPalette[0],
                 },
                 {
                     label: 'Sim',
                     data: [584, 143, 111, 97, 54, 43, 20, 6],
-                    // backgroundColor: colorPalette[1],
+                    backgroundColor: colorPalette[1],
                 },
             ]
         };
@@ -181,38 +169,39 @@
         });
 
         // Chart 3
-        const labels3 = ['Bauru', 'Lorena', 'Piracicaba', 'Pirassununga', 'Ribeirão Preto', 'São Carlos', 'São Paulo', 'USP Leste'];
+        const labels3 = ['São Paulo', 'Ribeirão Preto', 'São Carlos', 'Piracicaba',
+            'USP Leste', 'Bauru', 'Pirassununga', 'Lorena'];
         const data3 = {
             labels: labels3,
             datasets: [
                 {
                     label: 'Amarela',
-                    data: [0.0, 0.0, 3.0, 7.0, 1.0, 1.0, 1.0, 1.0],
+                    data: [9, 4, 1, 5, 2, 0, 2, 0],
                     backgroundColor: colorPalette[2],
                 },
                 {
                     label: 'Branca',
-                    data: [55.0, 32.0, 23.0, 29.0, 45.0, 38.0, 29.0, 32.0],
+                    data: [310, 130, 81, 37, 27, 46, 12, 6],
                     backgroundColor: colorPalette[3],
                 },
                 {
                     label: 'Indígena',
-                    data: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0],
+                    data: [7, 0, 2, 0, 0, 1, 0, 0],
                     backgroundColor: colorPalette[4],
                 },
                 {
                     label: 'Não informada',
-                    data: [18.0, 68.0, 58.0, 43.0, 30.0, 30.0, 47.0, 47.0],
+                    data: [501, 89, 57, 98, 42, 15, 13, 15],
                     backgroundColor: colorPalette[5],
                 },
                 {
                     label: 'Parda',
-                    data: [17.0, 0.0, 12.0, 14.0, 15.0, 21.0, 14.0, 9.0],
+                    data: [148, 49, 40, 20, 10, 14, 4, 0],
                     backgroundColor: colorPalette[0],
                 },
                 {
                     label: 'Preta / negra',
-                    data: [8.0, 0.0, 4.0, 7.0, 8.0, 9.0, 9.0, 10.0],
+                    data: [90, 22, 15, 8, 9, 7, 2, 0],
                     backgroundColor: colorPalette[1],
                 },
 
@@ -242,7 +231,7 @@
             }
         });
 
-
+        // Chart 4 (Pie Chart)
         const labels4 = ['Não informada', 'Branca', 'Parda', 'Preta / negra', 'Amarela', 'Indígena'];
         const data4 = {
             labels: labels4,
@@ -263,47 +252,6 @@
                     title: {
                         display: true,
                         text: 'Total de inscritos'
-                    }
-                }
-            }
-        });
-
-        // Chart 3
-        const labels5 = ['Bauru', 'Lorena', 'Piracicaba', 'Pirassununga', 'Ribeirão Preto', 'São Carlos', 'São Paulo', 'USP Leste'];
-        const data5 = {
-            labels: labels5,
-            datasets: [
-                {
-                    label: 'F',
-                    data: [79.0, 21.0, 48.0, 64.0, 53.0, 37.0, 47.0, 56.0],
-                    backgroundColor: colorPalette[2],
-                },
-                {
-                    label: 'M',
-                    data: [21.0, 79.0, 52.0, 36.0, 47.0, 63.0, 53.0, 44.0],
-                    backgroundColor: colorPalette[3],
-                },
-            ]
-        };
-
-        const ctx5 = document.getElementById('myChart5').getContext('2d');
-        new Chart(ctx5, {
-            type: 'bar',
-            data: data5,
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: ' Contemplados por Raça/Cor'
-                    },
-                },
-                responsive: true,
-                scales: {
-                    x: {
-                        stacked: true,
-                    },
-                    y: {
-                        stacked: true
                     }
                 }
             }
