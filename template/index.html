@@ -24,6 +24,35 @@
 
         }
 
+        .area {
+            width: 50%;
+            height: 45vh;
+            margin-bottom: 20px;
+            position: relative;
+            background-color: white;
+        }
+
+        .sub-area {
+            width: 100%;
+            height: 200%;
+            margin: 0px;
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+
+        }
+
+        #sub-area1 {
+            top: 5%;
+        }
+
+        #sub-area2 {
+            top: 55%;
+
+
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -45,7 +74,6 @@
         canvas {
             max-width: 100%;
             height: 457px;
-            /* Set height to 457px for all canvas elements */
             display: block;
             box-sizing: border-box;
             width: 100%;
@@ -68,6 +96,7 @@
         }
     </style>
 
+
 </head>
 
 <body>
@@ -88,16 +117,19 @@
                         <button onclick="showChart('chart6')">Renda per Capita</button>
                         <button onclick="showChart('chart7')">Idade</button>
                     </p>
-
-
                 </ul>
             </nav>
         </div>
         <div class="half-chart"><canvas id="myChart4"></canvas></div>
     </div>
-    <div class="mycontainer">
-        <div class="chart"><canvas id="myChart"></canvas></div>
-        <div class="chart"><canvas id="myChart2"></canvas></div>
+
+    <div class="area">
+        <div class="sub-area" id="sub-area1">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="sub-area" id="sub-area2">
+            <canvas id="myChart2"></canvas>
+        </div>
     </div>
 
 
