@@ -1,1 +1,1 @@
-Repositório do material produzido no desenvolvimento do dashboard para visualização dos dado de Covid.
+Repositório do material produzido no desenvolvimento do realtório PAPFE USP
