@@ -7,86 +7,66 @@
     <title>PAPFE USP</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        .mycontainer {
+            display: flex;
         }
 
-        .container {
+        .mycontainer>div {
+            width: 50%;
+        }
+
+        .mycontainer2 {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            align-items: center;
-            height: 100vh;
+        }
+
+        .mycontainer2>div {
+            width: 33%;
+
         }
 
         .area {
-            width: 49%;
-            /*ajusta o tamanho da seção*/
-            height: 50vh;
-            border: 2px solid red;
-            border-radius: 5px;
-            margin-bottom: 10px;
+            width: 50%;
+            height: 45vh;
+            margin-bottom: 20px;
             position: relative;
+            background-color: white;
         }
 
         .sub-area {
-            width: 98%;
-            height: 48%;
-            border: 1px solid #555;
+            width: 100%;
+            height: 200%;
             margin: 0px;
-            border-radius: 5px;
             text-align: center;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
+
         }
 
         #sub-area1 {
-            top: 0%;
+            top: 5%;
         }
 
         #sub-area2 {
-            top: 50%;
+            top: 55%;
         }
 
-        #area3-4 {
-            width: 99%;
-            height: 45vh;
-            border: 2px solid #555;
-            border-radius: 5px;
-            margin-bottom: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            /* Add position relative to allow absolute positioning inside */
+        body {
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            min-height: 100vh;
+            background-color: #f0f0f0;
         }
 
-        .sub-area-third {
-            width: 33%;
-            height: 45vh;
-            border: 1px solid #555;
-            border-radius: 5px;
-            text-align: center;
-            position: absolute;
-        }
-
-        #sub-area3 {
-            top: 0%;
-            left: 0%;
-        }
-
-        #sub-area4 {
-            top: 0%;
-            left: 33.3%;
-        }
-
-        #sub-area5 {
-            top: 0%;
-            left: 66.6%;
-
+        .chart {
+            grid-column: span 1;
+            grid-row: span 1;
+            padding: 20px;
+            background-color: white;
         }
 
         canvas {
@@ -96,38 +76,99 @@
             box-sizing: border-box;
             width: 100%;
         }
+
+        .half-chart {
+            grid-column: span 1;
+            grid-row: span 1;
+            padding: 10px;
+            background-color: white;
+            height: 457px;
+            width: calc(50% - 20px);
+        }
+
+        .half-chart .select-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        header,
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
     </style>
+
+
 </head>
 
 <body>
-    <div class="container">
-        <div class="area" id="area1">
-            <canvas id="myChart4"></canvas>
+    <div class="mycontainer">
+        <div>
+            <h1>Pró-Reitoria de Inclusão e Pertencimento</h1>
+            <nav>
+                <ul>
+                    <p>
+                        <button onclick="showChart('chart1')">Campus</button>
+                        <button onclick="showChart('chart2')">Unidade</button>
+                        <button onclick="showChart('chart3')">Contemplado</button>
+                    </p>
+                    <p>
+                        <button onclick="showChart('chart4')">Gênero</button>
+                        <button onclick="showChart('chart5')">Etnia</button>
+                        <button onclick="showChart('chart6')">Renda per Capita</button>
+                        <button onclick="showChart('chart7')">Idade</button>
+                    </p>
+                    <p>
+                        <button onclick="showChart('chart7')">Gerar relatório</button>
+                    </p>
+                </ul>
+            </nav>
         </div>
-        <div class="area" id="area2">
-            <div class="sub-area" id="sub-area1">
-                <canvas id="myChart"></canvas>
-            </div>
-            <div class="sub-area" id="sub-area2">
-                <canvas id="myChart2"></canvas>
-            </div>
-        </div>
-        <div class="area" id="area3-4">
-            <div class="sub-area-third" id="sub-area3">
-                <canvas id="myChart5"></canvas>
-            </div>
-            <div class="sub-area-third" id="sub-area4">
-                <canvas id="myChart3"></canvas>
-            </div>
-            <div class="sub-area-third" id="sub-area5">
-                <canvas id="myChart6"></canvas>
-            </div>
+        <div class="half-chart"><canvas id="myChart4"></canvas></div>
+    </div>
 
+    <div class="area">
+        <div class="sub-area" id="sub-area1">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="sub-area" id="sub-area2">
+            <canvas id="myChart2"></canvas>
         </div>
     </div>
+
+
+    <div class="chart"><canvas id="myChart3"></canvas></div>
+    <div class="chart"><canvas id="myChart6"></canvas></div>
+    <div class="chart"><canvas id="myChart5"></canvas></div>
+    <footer>
+        <p>© 2024 My Website. All rights reserved.</p>
+    </footer>
+
+
     <script>
+
+        function generateRandomColor() {
+            return '#' + Math.random().toString(16).substr(-6);
+        }
+
+        const colorPalette2 = [];
+        for (let i = 0; i < 8; i++) {// Generate a unique color palette
+
+            colorPalette2.push(generateRandomColor());
+        }
+
+
         const colorPalette = ["#e8d174", "#e39e54", "#d64d4d", "#4d7358", "#9ed670", "#fdcade", "#ffb703", "#219ebc"]
+        //const colorPalette3 = ['#ff7f0e', '#2ca02c', '#d62728', '#4d7358', '#d64d4d', '#1f77b4']
         const colorPalette3 = ["#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"]
+        //const colorPalette = ["#8ecae6", "#219ebc", "#023047", "#ffb703", "#fb8500"]
+
+        //const colorPalette3 = ['#F0F8FF', '#FAEBD7', '#00FFFF', '#7FFFD4', '#F0FFFF', '#F5F5DC', '#FFE4C4']
+
+        console.log(colorPalette);
 
         // Chart 1
         const ctx = document.getElementById('myChart').getContext('2d');
@@ -166,6 +207,7 @@
                 },
             ]
         };
+
         const ctx2 = document.getElementById('myChart2').getContext('2d');
         new Chart(ctx2, {
             type: 'bar',
@@ -227,6 +269,7 @@
 
             ]
         };
+
         const ctx3 = document.getElementById('myChart3').getContext('2d');
         new Chart(ctx3, {
             type: 'bar',
@@ -261,6 +304,7 @@
                 hoverOffset: 4
             }]
         };
+
         const ctx4 = document.getElementById('myChart4').getContext('2d');
         new Chart(ctx4, {
             type: 'doughnut',
@@ -292,6 +336,7 @@
                 },
             ]
         };
+
         const ctx5 = document.getElementById('myChart5').getContext('2d');
         new Chart(ctx5, {
             type: 'bar',
@@ -319,7 +364,7 @@
             }
         });
 
-        // Chart 6
+
         const labels6 = ['Bauru', 'Lorena', 'Piracicaba', 'Pirassununga', 'Ribeirão Preto', 'São Carlos', 'São Paulo', 'USP Leste'];
         const data6 = {
             labels: labels6,
@@ -346,6 +391,7 @@
                 },
             ]
         };
+
         const ctx6 = document.getElementById('myChart6').getContext('2d');
         new Chart(ctx6, {
             type: 'bar',
