@@ -173,13 +173,46 @@ def index(request):
 
     else:
         form = MyForm()
-        nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao = contemplados_campus(
+        nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao, total_geral = contemplados_campus(
+            df)
+
+        campus_nome_raca, total_amarela, total_Branca, total_Indigena, total_nao_informada, total_Parda, total_Preta_negra = contemplados_raca_cor_por_campus(
+            df)
+        contemplado_sexo_campos, contemplado_sexo_F, contemplado_sexo_M = contemplados_sexo(
+            df)
+
+        menos_0_5_sm, entre_0_5_e_1_sm, entre_1_e_1_5_sm, acima_1_5 = contemplado_renda(
+            df)
+
+        geral_cor_raca, total_geral_cor_raca = contemplados_raca_cor_geral(
             df)
 
         context = {
+            'form': form,
             'Posgrad': Posgrad,
-            # 'unidades': unidades,
             'lista_campus': lista_campus,
+            'nome_campus': nome_campus,
+            'total_sim': total_sim,
+            'total_geral_sim': total_geral_sim,
+            'total_nao': total_nao,
+            'total_geral_nao': total_geral_nao,
+            'campus_nome_raca': campus_nome_raca,
+            'total_amarela': total_amarela,
+            'total_Branca': total_Branca,
+            'total_Indigena': total_Indigena,
+            'total_nao_informada': total_nao_informada,
+            'total_Parda': total_Parda,
+            'total_Preta_negra': total_Preta_negra,
+            'contemplado_sexo_campos': contemplado_sexo_campos,
+            'contemplado_sexo_F': contemplado_sexo_F,
+            'contemplado_sexo_M': contemplado_sexo_M,
+            'menos_0_5_sm': menos_0_5_sm,
+            'entre_0_5_e_1_sm': entre_0_5_e_1_sm,
+            'entre_1_e_1_5_sm': entre_1_e_1_5_sm,
+            'acima_1_5': acima_1_5,
+            'geral_cor_raca': geral_cor_raca,
+            'total_geral_cor_raca': total_geral_cor_raca,
+            'total_geral': total_geral
         }
 
         return render(request, 'index.html', context=context)
