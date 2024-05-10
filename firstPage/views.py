@@ -86,6 +86,9 @@ def index(request):
 
             nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao, total_geral = contemplados_campus(
                 df)
+            tota_inscritos = sum(total_geral)
+            total_sim_inscrito = sum(total_sim)
+            total_nao_inscrito = sum(total_nao)
 
             campus_nome_raca, total_amarela, total_Branca, total_Indigena, total_nao_informada, total_Parda, total_Preta_negra = contemplados_raca_cor_por_campus(
                 df)
@@ -121,7 +124,10 @@ def index(request):
                 'acima_1_5': acima_1_5,
                 'geral_cor_raca': geral_cor_raca,
                 'total_geral_cor_raca': total_geral_cor_raca,
-                'total_geral': total_geral
+                'total_geral': total_geral,
+                'tota_inscritos': tota_inscritos,
+                'total_sim_inscrito': total_sim_inscrito,
+                'total_nao_inscrito': total_nao_inscrito
             }
             return render(request, 'index.html', context=context)
 
@@ -130,6 +136,9 @@ def index(request):
 
             nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao, total_geral = contemplados_campus(
                 df)
+
+            tota_inscritos = sum(total_geral)
+
             campus_nome_raca, total_amarela, total_Branca, total_Indigena, total_nao_informada, total_Parda, total_Preta_negra = contemplados_raca_cor_por_campus(
                 df)
             contemplado_sexo_campos, contemplado_sexo_F, contemplado_sexo_M = contemplados_sexo(
@@ -166,7 +175,10 @@ def index(request):
                 'acima_1_5': acima_1_5,
                 'geral_cor_raca': geral_cor_raca,
                 'total_geral_cor_raca': total_geral_cor_raca,
-                'total_geral': total_geral
+                'total_geral': total_geral,
+                'tota_inscritos': tota_inscritos,
+                'total_sim_inscrito': total_sim_inscrito,
+                'total_nao_inscrito': total_nao_inscrito
             }
 
             return render(request, 'index.html', context=context)
@@ -175,6 +187,7 @@ def index(request):
         form = MyForm()
         nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao, total_geral = contemplados_campus(
             df)
+        tota_inscritos = sum(total_geral)
 
         campus_nome_raca, total_amarela, total_Branca, total_Indigena, total_nao_informada, total_Parda, total_Preta_negra = contemplados_raca_cor_por_campus(
             df)
@@ -212,7 +225,11 @@ def index(request):
             'acima_1_5': acima_1_5,
             'geral_cor_raca': geral_cor_raca,
             'total_geral_cor_raca': total_geral_cor_raca,
-            'total_geral': total_geral
+            'total_geral': total_geral,
+            'tota_inscritos': tota_inscritos,
+            'total_sim_inscrito': total_sim_inscrito,
+            'total_nao_inscrito': total_nao_inscrito
+
         }
 
         return render(request, 'index.html', context=context)

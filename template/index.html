@@ -133,6 +133,13 @@
             <div class="sub-area-third" id="sub-area4">
                 <canvas id="myChart4"></canvas>
             </div>
+            <div class="sub-area-third" id="sub-area5">
+                <h1></h1>
+                <h2>Total de inscritos: {{tota_inscritos | safe}}</h2>
+                <h3>Total de contemplados: {{total_sim_inscrito | safe}}</h3>
+                <h3>Total de não contemplados: {{total_nao_inscrito | safe}}</h3>
+
+            </div>
         </div>
 
         <div class="area" id="area2">
@@ -266,7 +273,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: ' Contemplados por Raça/Cor'
+                        text: ' (%) Inscritos por Raça/Cor'
                     },
                 },
                 responsive: true,
@@ -300,7 +307,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Total de inscritos'
+                        text: 'Valor absoluto de inscritos por raça/cor'
                     }
                 }
             }
@@ -331,7 +338,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: ' Contemplados por Sexo'
+                        text: '(%) Inscritos por Sexo'
                     },
                 },
                 responsive: true,
@@ -385,7 +392,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Contemplados por Categoria de Renda'
+                        text: '(%) Inscritos por Categoria de Renda'
                     },
                 },
                 responsive: true,
