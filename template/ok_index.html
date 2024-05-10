@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPFE USP</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -104,37 +102,8 @@
 <body>
     <div class="container">
         <div class="area" id="area1">
-            <div class="sub-area-third" id="sub-area3">
-
-                </divclass>
-                <form method="post">
-                    {% csrf_token %}
-                    <label for="campus">Campus:</label>
-                    <select id="campus" name="campus">
-                        <option value="All">Todos</option>
-                        {% for campus in lista_campus %}
-                        <option value="{{ campus }}">{{ campus }}</option>
-                        {% endfor %}
-                    </select><br>
-
-                    <!--
-                    <label for="Unidades">Unidade:</label>
-                    <select id="unidades" name="unidades">
-                        <option value="all">Todas</option>
-                        {% for unidade in unidades %}
-                        <option value="{{ unidade }}">{{ unidade }}</option>
-                        {% endfor %}
-                    </select><br>
-                    -->
-
-                    <button type="submit">Filtrar</button>
-                </form>
-            </div>
-            <div class="sub-area-third" id="sub-area4">
-                <canvas id="myChart4"></canvas>
-            </div>
+            <canvas id="myChart4"></canvas>
         </div>
-
         <div class="area" id="area2">
             <div class="sub-area" id="sub-area1">
                 <canvas id="myChart"></canvas>
@@ -165,38 +134,37 @@
         new Chart(ctx, {
             type: 'bar',
             data: {
-                // labels: ['São Paulo', 'Ribeirão Preto', 'São Carlos', 'Piracicaba', 'USP Leste', 'Bauru', 'Pirassununga', 'Lorena'],
-                labels: {{ nome_campus | safe}},
-            datasets: [{
-                label: 'Total de inscritos',
-                data: {{ total_geral | safe}},
-            borderWidth: 1
-            }]
+                labels: ['São Paulo', 'Ribeirão Preto', 'São Carlos', 'Piracicaba', 'USP Leste', 'Bauru', 'Pirassununga', 'Lorena'],
+                datasets: [{
+                    label: 'Total de inscritos',
+                    data: [1071, 295, 196, 168, 92, 83, 33, 21],
+                    borderWidth: 1
+                }]
             },
             options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
         });
 
-
+        const labels2 = ['São Paulo', 'Ribeirão Preto', 'São Carlos', 'Piracicaba', 'USP Leste', 'Bauru', 'Pirassununga', 'Lorena'];
         const data2 = {
-            labels: {{ nome_campus | safe}},
-        datasets: [
-            {
-                label: 'Não',
-                data: {{ total_nao | safe}},
-                // backgroundColor: colorPalette[0],
-            },
-            {
-                label: 'Sim',
-                data: {{ total_sim | safe}},
-                // backgroundColor: colorPalette[1],
-            },
-        ]
+            labels: labels2,
+            datasets: [
+                {
+                    label: 'Não',
+                    data: [487, 152, 85, 71, 38, 40, 13, 15],
+                    // backgroundColor: colorPalette[0],
+                },
+                {
+                    label: 'Sim',
+                    data: [584, 143, 111, 97, 54, 43, 20, 6],
+                    // backgroundColor: colorPalette[1],
+                },
+            ]
         };
         const ctx2 = document.getElementById('myChart2').getContext('2d');
         new Chart(ctx2, {
@@ -222,41 +190,42 @@
         });
 
         // Chart 3
+        const labels3 = ['Bauru', 'Lorena', 'Piracicaba', 'Pirassununga', 'Ribeirão Preto', 'São Carlos', 'São Paulo', 'USP Leste'];
         const data3 = {
-            labels: {{ campus_nome_raca | safe}},
-        datasets: [
-            {
-                label: 'Amarela',
-                data: {{ total_amarela | safe}},
-            backgroundColor: colorPalette[2],
-            },
-            {
-                label: 'Branca',
-                data: {{ total_Branca | safe}},
-            backgroundColor: colorPalette[3],
-            },
-            {
-                label: 'Indígena',
-                data: {{ total_Indigena | safe}},
-            backgroundColor: colorPalette[4],
-            },
-            {
-                label: 'Não informada',
-                data: {{ total_nao_informada | safe}},
-            backgroundColor: colorPalette[5],
-            },
-            {
-                label: 'Parda',
-                data: {{ total_Parda| safe}},
-            backgroundColor: colorPalette[0],
-            },
-            {
-                label: 'Preta / negra',
-                data: {{ total_Preta_negra| safe}},
-            backgroundColor: colorPalette[1],
-            },
+            labels: labels3,
+            datasets: [
+                {
+                    label: 'Amarela',
+                    data: [0.0, 0.0, 3.0, 7.0, 1.0, 1.0, 1.0, 1.0],
+                    backgroundColor: colorPalette[2],
+                },
+                {
+                    label: 'Branca',
+                    data: [55.0, 32.0, 23.0, 29.0, 45.0, 38.0, 29.0, 32.0],
+                    backgroundColor: colorPalette[3],
+                },
+                {
+                    label: 'Indígena',
+                    data: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0],
+                    backgroundColor: colorPalette[4],
+                },
+                {
+                    label: 'Não informada',
+                    data: [18.0, 68.0, 58.0, 43.0, 30.0, 30.0, 47.0, 47.0],
+                    backgroundColor: colorPalette[5],
+                },
+                {
+                    label: 'Parda',
+                    data: [17.0, 0.0, 12.0, 14.0, 15.0, 21.0, 14.0, 9.0],
+                    backgroundColor: colorPalette[0],
+                },
+                {
+                    label: 'Preta / negra',
+                    data: [8.0, 0.0, 4.0, 7.0, 8.0, 9.0, 9.0, 10.0],
+                    backgroundColor: colorPalette[1],
+                },
 
-        ]
+            ]
         };
         const ctx3 = document.getElementById('myChart3').getContext('2d');
         new Chart(ctx3, {
@@ -282,14 +251,14 @@
         });
 
 
-        const labels4 = {{ geral_cor_raca| safe}};
+        const labels4 = ['Não informada', 'Branca', 'Parda', 'Preta / negra', 'Amarela', 'Indígena'];
         const data4 = {
             labels: labels4,
             datasets: [{
                 label: 'Total inscritos',
-                data: {{ total_geral_cor_raca | safe}},
-        backgroundColor: [colorPalette[5], colorPalette[3], colorPalette[0], colorPalette[1], colorPalette[2], colorPalette[4]],
-            hoverOffset: 4
+                data: [830, 649, 285, 153, 23, 10],
+                backgroundColor: [colorPalette[5], colorPalette[3], colorPalette[0], colorPalette[1], colorPalette[2], colorPalette[4]],
+                hoverOffset: 4
             }]
         };
         const ctx4 = document.getElementById('myChart4').getContext('2d');
@@ -307,21 +276,21 @@
         });
 
         // Chart 3
-
+        const labels5 = ['Bauru', 'Lorena', 'Piracicaba', 'Pirassununga', 'Ribeirão Preto', 'São Carlos', 'São Paulo', 'USP Leste'];
         const data5 = {
-            labels: {{ contemplado_sexo_campos | safe}},
-        datasets: [
-            {
-                label: 'F',
-                data: {{ contemplado_sexo_F | safe}},
-            backgroundColor: colorPalette[7],
-            },
-            {
-                label: 'M',
-                data: {{ contemplado_sexo_M| safe}},
-            backgroundColor: colorPalette[6],
-            },
-        ]
+            labels: labels5,
+            datasets: [
+                {
+                    label: 'F',
+                    data: [79.0, 21.0, 48.0, 64.0, 53.0, 37.0, 47.0, 56.0],
+                    backgroundColor: colorPalette[7],
+                },
+                {
+                    label: 'M',
+                    data: [21.0, 79.0, 52.0, 36.0, 47.0, 63.0, 53.0, 44.0],
+                    backgroundColor: colorPalette[6],
+                },
+            ]
         };
         const ctx5 = document.getElementById('myChart5').getContext('2d');
         new Chart(ctx5, {
@@ -399,7 +368,6 @@
                 }
             }
         });
-
 
     </script>
 </body>

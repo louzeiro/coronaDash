@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from .forms import MyForm
+
+
 import pandas as pd
 import numpy as np
 
@@ -9,13 +12,47 @@ import numpy as np
 df3 = pd.read_json(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json')
 
+Posgrad = pd.read_csv('datasets/Perfil_Posgrad_26062023.csv')
 
-def index(request):
-    # confirmedGlobal=pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv',encoding='utf-8',na_values=None)
+
+def bkp_index(request):
     # Posgrad = pd.read_csv('datasets/Perfil_Posgrad_26062023.csv')
-    Posgrad = pd.DataFrame()
 
-    # uniqueCountryNames = pd.unique(confirmedGlobal['Country/Region'])
+    unidades = Posgrad['unidade'].unique()
+    lista_campus = Posgrad['campus'].unique()
+
+    df = Posgrad
+
+    if request.method == 'GET':
+        unidade_filter = request.GET.get('unidade', 'all')
+        ano_filter = request.GET.get('ano', 'all')
+
+        filtered_df = Posgrad
+        if unidade_filter != 'all':
+            filtered_df = filtered_df[filtered_df['unidade'] == unidade_filter]
+
+        if ano_filter != 'all':
+            filtered_df = filtered_df[filtered_df['Ano'] == ano_filter]
+
+        df = filtered_df
+
+    # chamar as funções para gerar os gráficos
+
+    teste = df['unidade'].unique()
+
+    context = {
+        'Posgrad': Posgrad, 'unidades': unidades, 'lista_campus': lista_campus,
+        'df': df, 'teste': teste,
+    }
+
+    return render(request, 'index.html', context)
+
+    # Renderiza o template com o DataFrame filtrado
+    #    return render(request, 'index.html', {'df': filtered_df})
+    # else:
+    #    # Se a solicitação não for GET, redirecione para a mesma página
+    #    return render(request, 'index.html', {'df': Posgrad})
+
     # contryNames, countsVal, logVals, overallCount, dataForMapGraph, maxVal = getBarData(
     #    confirmedGlobal, uniqueCountryNames)  # Dado mapa
     # dataForheatMap, dateCat = getHeatMapData(
@@ -24,92 +61,272 @@ def index(request):
     # variavel que responde ao index.
     # context = {'dateCat': dateCat, 'dataForheatMap': dataForheatMap, 'maxVal': maxVal, 'dataForMapGraph': dataForMapGraph, 'axisvalues': axisvalues, 'datasetForLine': datasetForLine,
     #           'uniqueCountryNames': uniqueCountryNames, 'contryNames': contryNames, 'countsVal': countsVal, 'logVals': logVals, 'overallCount': overallCount}
-    context = {
-        'Posgrad': Posgrad
-    }
+    # context = {
+    #    'Posgrad': Posgrad, 'unidades': unidades, 'anos': anos,
+    # }
 
-    return render(request, 'index.html', context)
-
-
-def getBarData(confirmedGlobal, uniqueCountryNames):
-    df2 = confirmedGlobal[list(
-        confirmedGlobal.columns[1:2])+list([confirmedGlobal.columns[-2]])]
-    df2.columns = ['Country/Region', 'values']
-    df2 = df2.sort_values(by='values', ascending=False)
-    contryNames = list(df2['Country/Region'].values)
-    countsVal = list(df2['values'].values)
-    maxVal = max(countsVal)
-    overallCount = sum(countsVal)
-    logVals = list(np.log(ind) if ind != 0 else 0 for ind in countsVal)
-    dataForMapGraph = getDataforMap(uniqueCountryNames, df2)
-    # dictVal=[]
-    # for i in range(df2.shape[0]):
-    #     dictVal.append(dict(df2.ix[i]))
-    return (contryNames, countsVal, logVals, overallCount, dataForMapGraph, maxVal)
+    # return render(request, 'index.html', context)
 
 
-def getLinebarGroupData(confirmedGlobal):
-    colNames = confirmedGlobal.columns[4:-1]  # salvando os dias
-    top10 = confirmedGlobal[['Country/Region', confirmedGlobal.columns[-2]]].groupby(
-        'Country/Region').sum().sort_values(by=str(confirmedGlobal.columns[-2]), ascending=False)
-    # exibindo a evolução da covid nos atuais 10 país com mais casos
-    top10 = top10.iloc[0:10, :]
-    # colNames=confirmedGlobal.columns[4:-1]
-    top10 = top10.reset_index()
-    top10Names = top10['Country/Region']
-    datasetsForLine = []
-    for i in top10Names:
-        temp = {}  # inicializando o dicionário
-        temp['label'] = i  # salvando o país
-        temp['fill'] = 'false'
-        temp['borderWidth'] = 2
-        cores = list(np.random.choice(range(256), size=3))  # gerando as cores
-        cores.append(0.85)  # add o parâmetro de transparencia
-        cores = tuple(cores)  # transformando a lista em tuple
-        temp['borderColor'] = 'rgba'+str(cores)
-        temp['color'] = 'rgba'+str(cores)
-        temp['backgroundColor'] = 'rgba'+str(cores)
-        temp['data'] = confirmedGlobal[confirmedGlobal['Country/Region']
-                                       == i][colNames].sum().values.tolist()
-        datasetsForLine.append(temp)
-    return datasetsForLine, list(colNames)  # list(range(len(colNames)))
+def index(request):
+    df = Posgrad
 
-# dados do mapa
+    # melhorar, para exibir apenas as unidades do campus
+    lista_campus = Posgrad['campus'].unique()
+
+    if request.method == 'POST':
+        form = MyForm(request.POST)
+        if form.is_valid():
+            print('aaaaaaaqui -  recebeu forms')
+            var_campus = request.POST.get('campus')
+
+            if (var_campus != 'All'):  # or var_campus != 'all'):
+                print('aaaaaaaqui -  recebeu campus')
+                df = Posgrad[Posgrad['campus'] == var_campus]
+
+            nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao, total_geral = contemplados_campus(
+                df)
+
+            campus_nome_raca, total_amarela, total_Branca, total_Indigena, total_nao_informada, total_Parda, total_Preta_negra = contemplados_raca_cor_por_campus(
+                df)
+            contemplado_sexo_campos, contemplado_sexo_F, contemplado_sexo_M = contemplados_sexo(
+                df)
+            menos_0_5_sm, entre_0_5_e_1_sm, entre_1_e_1_5_sm, acima_1_5 = contemplado_renda(
+                df)
+            geral_cor_raca, total_geral_cor_raca = contemplados_raca_cor_geral(
+                df)
+
+            context = {
+                'form': form,
+                'Posgrad': Posgrad,
+                'lista_campus': lista_campus,
+                'nome_campus': nome_campus,
+                'total_sim': total_sim,
+                'total_geral_sim': total_geral_sim,
+                'total_nao': total_nao,
+                'total_geral_nao': total_geral_nao,
+                'campus_nome_raca': campus_nome_raca,
+                'total_amarela': total_amarela,
+                'total_Branca': total_Branca,
+                'total_Indigena': total_Indigena,
+                'total_nao_informada': total_nao_informada,
+                'total_Parda': total_Parda,
+                'total_Preta_negra': total_Preta_negra,
+                'contemplado_sexo_campos': contemplado_sexo_campos,
+                'contemplado_sexo_F': contemplado_sexo_F,
+                'contemplado_sexo_M': contemplado_sexo_M,
+                'menos_0_5_sm': menos_0_5_sm,
+                'entre_0_5_e_1_sm': entre_0_5_e_1_sm,
+                'entre_1_e_1_5_sm': entre_1_e_1_5_sm,
+                'acima_1_5': acima_1_5,
+                'geral_cor_raca': geral_cor_raca,
+                'total_geral_cor_raca': total_geral_cor_raca,
+                'total_geral': total_geral
+            }
+            return render(request, 'index.html', context=context)
+
+        else:
+            print('Flaaaaa')
+
+            nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao, total_geral = contemplados_campus(
+                df)
+            campus_nome_raca, total_amarela, total_Branca, total_Indigena, total_nao_informada, total_Parda, total_Preta_negra = contemplados_raca_cor_por_campus(
+                df)
+            contemplado_sexo_campos, contemplado_sexo_F, contemplado_sexo_M = contemplados_sexo(
+                df)
+
+            menos_0_5_sm, entre_0_5_e_1_sm, entre_1_e_1_5_sm, acima_1_5 = contemplado_renda(
+                df)
+
+            geral_cor_raca, total_geral_cor_raca = contemplados_raca_cor_geral(
+                df)
+
+            context = {
+                'form': form,
+                'Posgrad': Posgrad,
+                'lista_campus': lista_campus,
+                'nome_campus': nome_campus,
+                'total_sim': total_sim,
+                'total_geral_sim': total_geral_sim,
+                'total_nao': total_nao,
+                'total_geral_nao': total_geral_nao,
+                'campus_nome_raca': campus_nome_raca,
+                'total_amarela': total_amarela,
+                'total_Branca': total_Branca,
+                'total_Indigena': total_Indigena,
+                'total_nao_informada': total_nao_informada,
+                'total_Parda': total_Parda,
+                'total_Preta_negra': total_Preta_negra,
+                'contemplado_sexo_campos': contemplado_sexo_campos,
+                'contemplado_sexo_F': contemplado_sexo_F,
+                'contemplado_sexo_M': contemplado_sexo_M,
+                'menos_0_5_sm': menos_0_5_sm,
+                'entre_0_5_e_1_sm': entre_0_5_e_1_sm,
+                'entre_1_e_1_5_sm': entre_1_e_1_5_sm,
+                'acima_1_5': acima_1_5,
+                'geral_cor_raca': geral_cor_raca,
+                'total_geral_cor_raca': total_geral_cor_raca,
+                'total_geral': total_geral
+            }
+
+            return render(request, 'index.html', context=context)
+
+    else:
+        form = MyForm()
+        nome_campus, total_sim, total_geral_sim, total_nao, total_geral_nao = contemplados_campus(
+            df)
+
+        context = {
+            'Posgrad': Posgrad,
+            # 'unidades': unidades,
+            'lista_campus': lista_campus,
+        }
+
+        return render(request, 'index.html', context=context)
 
 
-def getDataforMap(uniqueCOuntryName, df2):
-    dataForMap = []
-    for i in uniqueCOuntryName:
-        try:
-            tempdf = df3[df3['name'] == i]
-            temp = {}
-            temp["code3"] = list(tempdf['code3'].values)[0]
-            temp["name"] = i
-            temp["value"] = df2[df2['Country/Region'] == i]['values'].sum()
-            temp["code"] = list(tempdf['code'].values)[0]
-            dataForMap.append(temp)
-        except:
-            pass
-    print(len(dataForMap))
-    return dataForMap
+def contemplados_campus(df):
+    if len(df['Campus'].unique()) > 1:
+
+        data = round(pd.crosstab(
+            df['Campus'], df['Contemplado'],
+            margins='index', margins_name='Total'))
+        data.sort_values(by='Total', inplace=True, ascending=False)
+        total_geral = data['Total'].tolist()
+        data.drop('Total', axis=0, inplace=True)  # linha
+        data.drop('Total', axis=1, inplace=True)  # coluna
+        total_geral_sim = data['Sim'].sum()
+        total_geral_nao = data['Não'].sum()
+        nome_campus = data.index.tolist()
+        total_sim = data['Sim'].to_list()
+        total_nao = data['Não'].to_list()
+
+    else:
+        data = df[['Campus', 'Contemplado']].value_counts().reset_index()
+        total_geral = [sum(data['count'].tolist())]
+        nome_campus = data.Campus.unique().tolist()
+        total_sim = data.loc[data.Contemplado == 'Sim', 'count'].tolist()
+        total_geral_sim = total_sim
+        total_nao = data.loc[data.Contemplado == 'Não', 'count'].tolist()
+        total_geral_nao = total_nao
+
+    return (nome_campus, total_sim, total_geral_sim, total_nao,
+            total_geral_nao, total_geral)
 
 
-def getHeatMapData(confirmedGlobal, contryNames):
-    df3 = confirmedGlobal[list(
-        confirmedGlobal.columns[1:2])+list(list(confirmedGlobal.columns.values)[-6:-1])]
-    dataForheatMap = []
-    for i in contryNames:
-        try:
-            tempdf = df3[df3['Country/Region'] == i]
-            temp = {}
-            temp["name"] = i
-            temp["data"] = [{'x': j, 'y': k} for j, k in zip(
-                tempdf[tempdf.columns[1:]].sum().index, tempdf[tempdf.columns[1:]].sum().values)]
-            dataForheatMap.append(temp)
-        except:
-            pass
-    dateCat = list(list(confirmedGlobal.columns.values)[-6:-1])
-    return dataForheatMap, dateCat
+def contemplados_raca_cor_geral(df):
+    geral_cor_raca = df['Raça / Cor'].value_counts().reset_index()[
+        'Raça / Cor'].tolist()
+    total_geral_cor_raca = df['Raça / Cor'].value_counts().reset_index()[
+        'count'].tolist()
+
+    return (geral_cor_raca, total_geral_cor_raca)
+
+
+def contemplados_raca_cor_geral_(df):
+    data = pd.crosstab(
+        df['Campus'], df['Raça / Cor'])
+
+    nome_raca_cor_geral = data.columns.tolist()
+
+    if 'Amarela' in data.columns:
+        total_amarela_geral = sum(data['Amarela'].tolist())
+    else:
+        total_amarela_geral = [0]
+
+    if 'Indígena' in data.columns:
+        total_Indigena_geral = sum(data['Indígena'].tolist())
+    else:
+        total_Indigena_geral = [0]
+
+    if 'Parda' in data.columns:
+        total_Parda_geral = sum(data['Parda'].tolist())
+    else:
+        total_Parda_geral = [0]
+
+    if 'Preta / negra' in data.columns:
+        total_Preta_negra_geral = sum(data['Preta / negra'].tolist())
+    else:
+        total_Preta_negra_geral = [0]
+
+    total_Branca_geral = sum(data['Branca'].tolist())
+    total_nao_informada_geral = sum(data['Não informada'].tolist())
+    print(data)
+
+    return (nome_raca_cor_geral, total_amarela_geral, total_Branca_geral, total_Indigena_geral,
+            total_nao_informada_geral, total_Parda_geral, total_Preta_negra_geral)
+
+
+def contemplados_raca_cor_por_campus(df):
+    data = round(pd.crosstab(
+        df['Campus'], df['Raça / Cor'], normalize='index') * 100)
+
+    campus_nome = data.index.tolist()
+
+    if 'Amarela' in data.columns:
+        total_amarela = data['Amarela'].tolist()
+    else:
+        total_amarela = [0]
+
+    if 'Indígena' in data.columns:
+        total_Indigena = data['Indígena'].tolist()
+    else:
+        total_Indigena = [0]
+
+    if 'Parda' in data.columns:
+        total_Parda = data['Parda'].tolist()
+    else:
+        total_Parda = [0]
+
+    if 'Preta / negra' in data.columns:
+        total_Preta_negra = data['Preta / negra'].tolist()
+    else:
+        total_Preta_negra = [0]
+
+    total_Branca = data['Branca'].tolist()
+    total_nao_informada = data['Não informada'].tolist()
+
+    return (campus_nome, total_amarela, total_Branca, total_Indigena,
+            total_nao_informada, total_Parda, total_Preta_negra)
+
+
+def contemplados_sexo(df):
+
+    data = round((
+        pd.crosstab(df['Campus'], df['Sexo'], normalize='index')*100)).reset_index()
+    contemplado_sexo_campos = data['Campus'].tolist()
+    contemplado_sexo_F = data['F'].tolist()
+    contemplado_sexo_M = data['M'].tolist()
+
+    return (contemplado_sexo_campos, contemplado_sexo_F, contemplado_sexo_M)
+
+
+def contemplado_renda(df):
+    menos_0_5_sm = 1
+    entre_0_5_e_1_sm = 1
+    entre_1_e_1_5_sm = 1
+    acima_1_5 = 1
+
+    return (menos_0_5_sm, entre_0_5_e_1_sm, entre_1_e_1_5_sm, acima_1_5)
+
+
+def contemplado_renda_(df):
+    df['Renda per capita'] = pd.to_numeric(
+        df['Renda per capita'], errors='coerce')
+    df['Renda per capita por salario minimo'] = round(
+        df['Renda per capita']/1412, 1)
+
+    menos_0_5_sm = df[df['Renda per capita por salario minimo']
+                      < 0.5]['Renda per capita por salario minimo'].count()
+    entre_0_5_e_1_sm = df.loc[(df['Renda per capita por salario minimo'] >= 0.5)
+                              & (df['Renda per capita por salario minimo'] < 1)
+                              ]['Renda per capita por salario minimo'].count()
+    entre_1_e_1_5_sm = df.loc[(df['Renda per capita por salario minimo'] >= 1.0)
+                              & (df['Renda per capita por salario minimo'] < 1.5)
+                              ]['Renda per capita por salario minimo'].count()
+    acima_1_5 = df.loc[(df['Renda per capita por salario minimo'] >= 1.5)
+                       ]['Renda per capita por salario minimo'].count()
+    return (menos_0_5_sm, entre_0_5_e_1_sm, entre_1_e_1_5_sm, acima_1_5)
 
 
 @csrf_exempt

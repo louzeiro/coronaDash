@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Filtrar DataFrame</title>
+</head>
+
+<body>
+    <form id="filterForm">
+        <label for="gender">Sexo:</label>
+        <select id="gender" name="gender">
+            <option value="all">Todos</option>
+            <option value="male">Masculino</option>
+            <option value="female">Feminino</option>
+        </select><br>
+
+        <label for="city">Cidade:</label>
+        <select id="city" name="city">
+            <option value="all">Todas</option>
+            <option value="city1">Cidade 1</option>
+            <option value="city2">Cidade 2</option>
+            <!-- Adicione mais opções de cidade conforme necessário -->
+        </select><br>
+
+        <label for="education">Escolaridade:</label>
+        <select id="education" name="education">
+            <option value="all">Todas</option>
+            <option value="high_school">Ensino Médio</option>
+            <option value="college">Ensino Superior</option>
+            <!-- Adicione mais opções de escolaridade conforme necessário -->
+        </select><br>
+
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Gênero</th>
+                <th>Cidade</th>
+                <th>Escolaridade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in df.iterrows %}
+            <tr>
+                <td>{{ row.Name }}</td>
+                <td>{{ row.Age }}</td>
+                <td>{{ row.Gender }}</td>
+                <td>{{ row.City }}</td>
+                <td>{{ row.Education }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Enviar solicitação ao servidor quando o formulário for enviado
+            $('#filterForm').submit(function (event) {
+                event.preventDefault();
+                var formData = $(this).serialize(); // Obtém os dados do formulário
+                $.ajax({
+                    type: 'GET',
+                    url: window.location.pathname,
+                    data: formData,
+                    success: function (response) {
+                        $('tbody').html(response);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

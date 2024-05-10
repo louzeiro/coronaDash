@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter and Pie Chart Example</title>
+    <style>
+        /* CSS styling */
+        .filter-button {
+            cursor: pointer;
+            padding: 5px 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+        }
+
+        .filter-button.active {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HTML structure -->
+    <div id="items">
+        <div class="item" data-category="fruit" data-price="1.99" data-value="10">Apple</div>
+        <div class="item" data-category="fruit" data-price="2.49" data-value="20">Banana</div>
+        <div class="item" data-category="vegetable" data-price="0.99" data-value="15">Carrot</div>
+        <div class="item" data-category="vegetable" data-price="1.49" data-value="25">Potato</div>
+    </div>
+
+    <!-- Filter buttons -->
+    <button class="filter-button" data-category="all">All</button>
+    <button class="filter-button" data-category="fruit">Fruit</button>
+    <button class="filter-button" data-category="vegetable">Vegetable</button>
+
+    <!-- Price filter -->
+    <label for="price-filter">Price:</label>
+    <select id="price-filter">
+        <option value="all">All</option>
+        <option value="1">Less than $1.00</option>
+        <option value="2">$1.00 - $1.99</option>
+        <option value="3">$2.00 and above</option>
+    </select>
+
+    <!-- Chart container -->
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // JavaScript functionality
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const items = document.querySelectorAll('.item');
+        const priceFilter = document.getElementById('price-filter');
+        let myChart;
+
+        // Initial chart creation
+        createChart();
+
+        // Event listeners for filter buttons
+        filterButtons.forEach(button => {
+            button.addEventListener('click', updateChart);
+        });
+
+        // Event listener for price filter
+        priceFilter.addEventListener('change', updateChart);
+
+        // Function to create the chart
+        function createChart() {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Value',
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Function to update the chart
+        function updateChart() {
+            const category = document.querySelector('.filter-button.active').getAttribute('data-category');
+            const priceCategory = priceFilter.value;
+
+            const filteredData = Array.from(items)
+                .filter(item => {
+                    const categoryMatch = category === 'all' || item.getAttribute('data-category') === category;
+                    const priceMatch = priceCategory === 'all' || checkPrice(item.getAttribute('data-price'), priceCategory);
+                    return categoryMatch && priceMatch;
+                })
+                .map(item => ({
+                    label: item.textContent,
+                    value: parseInt(item.getAttribute('data-value'))
+                }));
+
+            updateChartWithData(filteredData);
+        }
+
+        // Function to update the chart with new data
+        function updateChartWithData(data) {
+            const labels = data.map(item => item.label);
+            const values = data.map(item => item.value);
+
+            myChart.data.labels = labels;
+            myChart.data.datasets[0].data = values;
+            myChart.update();
+        }
+
+        // Function to check if item's price falls within selected range
+        function checkPrice(price, category) {
+            switch (category) {
+                case '1':
+                    return parseFloat(price) < 1.00;
+                case '2':
+                    return parseFloat(price) >= 1.00 && parseFloat(price) < 2.00;
+                case '3':
+                    return parseFloat(price) >= 2.00;
+                default:
+                    return true;
+            }
+        }
+    </script>
+
+</body>
+
+</html> 
