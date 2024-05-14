@@ -199,6 +199,9 @@ def index(request):
 
         geral_cor_raca, total_geral_cor_raca = contemplados_raca_cor_geral(
             df)
+        tota_inscritos = sum(total_geral)
+        total_sim_inscrito = sum(total_sim)
+        total_nao_inscrito = sum(total_nao)
 
         context = {
             'form': form,
